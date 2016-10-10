@@ -1,0 +1,48 @@
+repositories {
+    jcenter()
+    maven { url 'https://maven.fabric.io/public' }
+}
+
+apply plugin: 'com.android.library'
+android {
+    compileSdkVersion 24
+    buildToolsVersion "24.0.2"
+
+    defaultConfig {
+        minSdkVersion 15
+        targetSdkVersion 24
+    }
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile 'com.android.support:support-annotations:24.2.1'
+
+    provided('com.crashlytics.sdk.android:crashlytics:2.6.1@aar') {
+        transitive = true;
+    }
+
+    testCompile 'junit:junit:4.12'
+}
+
+ext {
+    libraryName = 'logger'
+    libraryGroupId = 'fr.beapp'
+    libraryArtifactId = 'logger'
+    libraryVersion = '1.0'
+    libraryPackaging = 'aar'
+
+    libraryDescription = 'A logger library to wrap and enhanced default Android logs'
+
+    siteUrl = 'https://bitbucket.org/beappers/beapp.logger.andro'
+    gitUrl = 'git@bitbucket.org:beappers/beapp.logger.andro.git'
+
+    developerId = 'dvilleneuve'
+    developerName = 'Damien Villeneuve'
+    developerEmail = 'd.villeneuve@beapp.fr'
+
+    licenseName = 'The Apache Software License, Version 2.0'
+    licenseUrl = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+    allLicenses = ["Apache-2.0"]
+}
+apply from: 'https://bitbucket.org/beappers/beapp.gradle/raw/master/publish-library.gradle'
