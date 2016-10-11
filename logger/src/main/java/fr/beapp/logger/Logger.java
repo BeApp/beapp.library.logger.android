@@ -3,66 +3,112 @@ package fr.beapp.logger;
 import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.text.TextUtils;
 import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import fr.beapp.logger.appender.Appender;
-import fr.beapp.logger.fomatter.DefaultFormatter;
-import fr.beapp.logger.fomatter.Formatter;
+import fr.beapp.logger.formatter.DefaultFormatter;
+import fr.beapp.logger.formatter.Formatter;
 
+/**
+ * Logger class with enhanced {@link Formatter} and possibility to add multiple {@link Appender}s.
+ * <br/>
+ * This implementation was inspired by both :
+ * <ul>
+ * <li><a href="https://github.com/JakeWharton/timber">Square's Timber</a></li>
+ * <li><a href="http://www.slf4j.org/">QOS's SLF4J</a></li>
+ * </ul>
+ */
 public class Logger {
 
 	private static final List<Appender> APPENDERS = new ArrayList<>();
 	private static Formatter formatter = new DefaultFormatter();
-	private static String tag;
 
-	public static void tag(@NonNull String tag) {
-		Logger.tag = tag;
+	/**
+	 * Set the {@link Formatter} to use in order to format every log message. The formatted message will be used on all {@link Appender}s.
+	 * <br/>
+	 * Default is {@link DefaultFormatter}.
+	 *
+	 * @param formatter The formatter to use
+	 */
+	public static void formatter(@NonNull Formatter formatter) {
+		Logger.formatter = formatter;
 	}
 
+	/**
+	 * Add a new {@link Appender} to use to log messages
+	 *
+	 * @param appender The appender to add
+	 */
 	public static void add(@NonNull Appender appender) {
 		synchronized (APPENDERS) {
 			APPENDERS.add(appender);
 		}
 	}
 
+	/**
+	 * Log a TRACE message with optional format args.
+	 */
 	public static void trace(@Nullable String message, Object... args) {
-		log(Log.VERBOSE, tag, null, message, args);
+		log(Log.VERBOSE, null, message, args);
 	}
 
+	/**
+	 * Log a DEBUG message with optional format args.
+	 */
 	public static void debug(@Nullable String message, Object... args) {
-		log(Log.DEBUG, tag, null, message, args);
+		log(Log.DEBUG, null, message, args);
 	}
 
+	/**
+	 * Log an INFO message with optional format args.
+	 */
 	public static void info(@Nullable String message, Object... args) {
-		log(Log.INFO, tag, null, message, args);
+		log(Log.INFO, null, message, args);
 	}
 
+	/**
+	 * Log a WARNING message with optional format args.
+	 */
 	public static void warn(@Nullable String message, Object... args) {
-		log(Log.WARN, tag, null, message, args);
+		log(Log.WARN, null, message, args);
 	}
 
+	/**
+	 * Log a WARNING exception and a message with optional format args.
+	 */
 	public static void warn(@Nullable String message, @Nullable Throwable tr, Object... args) {
-		log(Log.WARN, tag, tr, message, args);
+		log(Log.WARN, tr, message, args);
 	}
 
+	/**
+	 * Log an ERROR message with optional format args.
+	 */
 	public static void error(@Nullable String message, Object... args) {
-		log(Log.ERROR, tag, null, message, args);
+		log(Log.ERROR, null, message, args);
 	}
 
+	/**
+	 * Log an ERROR exception and a message with optional format args.
+	 */
 	public static void error(@Nullable String message, @Nullable Throwable tr, Object... args) {
-		log(Log.ERROR, tag, tr, message, args);
+		log(Log.ERROR, tr, message, args);
 	}
 
+	/**
+	 * Log an WTF message with optional format args.
+	 */
 	public static void wtf(@Nullable String message, Object... args) {
-		log(Log.ASSERT, tag, null, message, args);
+		log(Log.ASSERT, null, message, args);
 	}
 
+	/**
+	 * Log an WTF exception and a message with optional format args.
+	 */
 	public static void wtf(@Nullable String message, @Nullable Throwable tr, Object... args) {
-		log(Log.ASSERT, tag, tr, message, args);
+		log(Log.ASSERT, tr, message, args);
 	}
 
 	protected static boolean isLoggable(@LogLevel int priority) {
@@ -70,18 +116,18 @@ public class Logger {
 	}
 
 	@SuppressWarnings("ConstantConditions")
-	private static void log(@LogLevel int priority, @NonNull String tag, @Nullable Throwable tr, @Nullable String message, Object... args) {
+	protected static void log(@LogLevel int priority, @Nullable Throwable tr, @Nullable String message, Object... args) {
 		if (!isLoggable(priority)) {
 			return;
 		}
 
 		String formattedMessage = formatter.format(tr, message, args);
-		if (TextUtils.isEmpty(formattedMessage)) {
+		if (formattedMessage == null || formattedMessage.isEmpty()) {
 			return;
 		}
 
 		for (Appender appender : APPENDERS) {
-			appender.log(priority, tag, formattedMessage, tr);
+			appender.log(priority, formattedMessage, tr);
 		}
 	}
 
