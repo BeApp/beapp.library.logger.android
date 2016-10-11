@@ -1,8 +1,8 @@
-package fr.beapp.logger.fomatter;
+package fr.beapp.logger.formatter;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.text.TextUtils;
+import android.util.Log;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -15,10 +15,20 @@ public class DefaultFormatter implements Formatter {
 
 	private static final WeakHashMap<String, String> SHORTEN_CLASS_NAMES = new WeakHashMap<>();
 
+	private final String stacktraceSentinel;
+
+	public DefaultFormatter() {
+		this(Logger.class.getCanonicalName());
+	}
+
+	public DefaultFormatter(String stacktraceSentinel) {
+		this.stacktraceSentinel = stacktraceSentinel;
+	}
+
 	@Nullable
 	@Override
 	public String format(@Nullable Throwable tr, @Nullable String message, Object... args) {
-		if (TextUtils.isEmpty(message)) {
+		if (message == null || message.isEmpty()) {
 			message = null;
 		}
 
@@ -44,7 +54,7 @@ public class DefaultFormatter implements Formatter {
 	}
 
 	@Nullable
-	private String getStackTraceString(@NonNull Throwable t) {
+	protected String getStackTraceString(@NonNull Throwable t) {
 		// Don't replace this with Log.getStackTraceString() - it hides UnknownHostException, which is not what we want.
 		StringWriter sw = new StringWriter(256);
 		PrintWriter pw = new PrintWriter(sw, false);
@@ -60,7 +70,7 @@ public class DefaultFormatter implements Formatter {
 
 			boolean isInLoggerClass = false;
 			for (StackTraceElement stackTraceElement : stackTraceElements) {
-				if (Logger.class.getCanonicalName().equals(stackTraceElement.getClassName())) {
+				if (stacktraceSentinel.equals(stackTraceElement.getClassName())) {
 					isInLoggerClass = true;
 				} else if (isInLoggerClass) {
 					return String.format(Locale.ENGLISH, "%s:%d", shortenCanonicalName(stackTraceElement.getClassName()), stackTraceElement.getLineNumber());
@@ -73,6 +83,9 @@ public class DefaultFormatter implements Formatter {
 
 	@NonNull
 	protected String shortenCanonicalName(final @NonNull String canonicalName) {
+		if (canonicalName.isEmpty())
+			return "";
+
 		synchronized (SHORTEN_CLASS_NAMES) {
 			String shortenClassName = SHORTEN_CLASS_NAMES.get(canonicalName);
 			if (shortenClassName == null) {

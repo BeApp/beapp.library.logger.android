@@ -3,15 +3,14 @@ package fr.beapp.logger;
 import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.text.TextUtils;
 import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import fr.beapp.logger.appender.Appender;
-import fr.beapp.logger.fomatter.DefaultFormatter;
-import fr.beapp.logger.fomatter.Formatter;
+import fr.beapp.logger.formatter.DefaultFormatter;
+import fr.beapp.logger.formatter.Formatter;
 
 public class Logger {
 
@@ -21,6 +20,10 @@ public class Logger {
 
 	public static void tag(@NonNull String tag) {
 		Logger.tag = tag;
+	}
+
+	public static void formatter(@NonNull Formatter formatter) {
+		Logger.formatter = formatter;
 	}
 
 	public static void add(@NonNull Appender appender) {
@@ -70,13 +73,13 @@ public class Logger {
 	}
 
 	@SuppressWarnings("ConstantConditions")
-	private static void log(@LogLevel int priority, @NonNull String tag, @Nullable Throwable tr, @Nullable String message, Object... args) {
+	protected static void log(@LogLevel int priority, @NonNull String tag, @Nullable Throwable tr, @Nullable String message, Object... args) {
 		if (!isLoggable(priority)) {
 			return;
 		}
 
 		String formattedMessage = formatter.format(tr, message, args);
-		if (TextUtils.isEmpty(formattedMessage)) {
+		if (formattedMessage == null || formattedMessage.isEmpty()) {
 			return;
 		}
 

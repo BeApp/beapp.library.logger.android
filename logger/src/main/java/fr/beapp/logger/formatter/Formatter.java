@@ -1,7 +1,5 @@
-package fr.beapp.logger.fomatter;
+package fr.beapp.logger.formatter;
 
-
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 public interface Formatter {
