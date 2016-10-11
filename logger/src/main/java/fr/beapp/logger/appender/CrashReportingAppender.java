@@ -10,7 +10,7 @@ import fr.beapp.logger.Logger;
 public class CrashReportingAppender extends Appender {
 
 	@Override
-	public void log(@Logger.LogLevel int priority, @NonNull String tag, @NonNull String message, @Nullable Throwable t) {
+	public void log(@Logger.LogLevel int priority, @NonNull String message, @Nullable Throwable t) {
 		Crashlytics.log(String.format("%s: %s", Logger.findLevelName(priority), message));
 
 		if (t != null) {

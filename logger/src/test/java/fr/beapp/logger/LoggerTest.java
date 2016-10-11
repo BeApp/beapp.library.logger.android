@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
-import android.util.SparseBooleanArray;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -13,8 +12,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import fr.beapp.logger.appender.Appender;
-
-import static org.junit.Assert.*;
 
 public class LoggerTest {
 
@@ -28,7 +25,7 @@ public class LoggerTest {
 		}
 
 		@Override
-		public void log(@Logger.LogLevel int priority, @NonNull String tag, @NonNull String message, @Nullable Throwable t) {
+		public void log(@Logger.LogLevel int priority, @NonNull String message, @Nullable Throwable t) {
 			acc.put(key, true);
 		}
 	}
@@ -44,7 +41,7 @@ public class LoggerTest {
 		Logger.add(appender1);
 		Logger.add(appender5);
 
-		Logger.log(Log.DEBUG, "test", null, "test message");
+		Logger.log(Log.DEBUG, null, "test message");
 
 		Assert.assertEquals(true, acc.get(1));
 		Assert.assertEquals(true, acc.get(5));

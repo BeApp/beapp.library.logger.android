@@ -9,8 +9,14 @@ import fr.beapp.logger.Logger;
 public class DebugAppender extends Appender {
 	private static final int MAX_LOG_LENGTH = 4000;
 
+	private final String tag;
+
+	public DebugAppender(String tag) {
+		this.tag = tag;
+	}
+
 	@Override
-	public void log(@Logger.LogLevel int priority, @NonNull String tag, @NonNull String message, @Nullable Throwable t) {
+	public void log(@Logger.LogLevel int priority, @NonNull String message, @Nullable Throwable t) {
 		if (message.length() < MAX_LOG_LENGTH) {
 			if (priority == Log.ASSERT) {
 				Log.wtf(tag, message);

@@ -7,6 +7,6 @@ import fr.beapp.logger.Logger;
 
 public abstract class Appender {
 
-	public abstract void log(@Logger.LogLevel int priority, @NonNull String tag, @NonNull String message, @Nullable Throwable t);
+	public abstract void log(@Logger.LogLevel int priority, @NonNull String message, @Nullable Throwable t);
 
 }

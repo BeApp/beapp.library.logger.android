@@ -40,7 +40,7 @@ public class FileAppender extends Appender {
 	}
 
 	@Override
-	public void log(@Logger.LogLevel int priority, @NonNull String tag, @NonNull String message, @Nullable Throwable t) {
+	public void log(@Logger.LogLevel int priority, @NonNull String message, @Nullable Throwable t) {
 		if (printStream != null) {
 			try {
 				printStream.print(buildLogline(priority, message));
