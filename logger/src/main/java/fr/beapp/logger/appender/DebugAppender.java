@@ -21,11 +21,7 @@ public class DebugAppender extends Appender {
 	@Override
 	public void log(@Logger.LogLevel int priority, @NonNull String message, @Nullable Throwable tr) {
 		if (message.length() < MAX_LOG_LENGTH) {
-			if (priority == Log.ASSERT) {
-				Log.wtf(tag, message);
-			} else {
-				Log.println(priority, tag, message);
-			}
+			logLine(priority, message);
 			return;
 		}
 
@@ -35,14 +31,17 @@ public class DebugAppender extends Appender {
 			newline = newline != -1 ? newline : length;
 			do {
 				int end = Math.min(newline, i + MAX_LOG_LENGTH);
-				String part = message.substring(i, end);
-				if (priority == Log.ASSERT) {
-					Log.wtf(tag, part);
-				} else {
-					Log.println(priority, tag, part);
-				}
+				logLine(priority, message.substring(i, end));
 				i = end;
 			} while (i < newline);
+		}
+	}
+
+	protected void logLine(int priority, String message) {
+		if (priority == Log.ASSERT) {
+			Log.wtf(tag, message);
+		} else {
+			Log.println(priority, tag, message);
 		}
 	}
 

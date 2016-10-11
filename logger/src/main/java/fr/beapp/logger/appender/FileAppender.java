@@ -43,14 +43,20 @@ public class FileAppender extends Appender {
 		}
 	}
 
+	public FileAppender(PrintStream printStream) {
+		this.printStream = printStream;
+	}
+
+	public void close() {
+		printStream.close();
+		printStream = null;
+	}
+
 	@Override
 	public void log(@Logger.LogLevel int priority, @NonNull String message, @Nullable Throwable tr) {
 		if (printStream != null) {
 			try {
 				printStream.print(buildLogline(priority, message));
-				if (tr != null) {
-					tr.printStackTrace(printStream);
-				}
 				printStream.print('\n');
 				printStream.flush();
 			} catch (Exception ignored) {
@@ -58,13 +64,13 @@ public class FileAppender extends Appender {
 		}
 	}
 
-	private String buildFilename(String filenamePattern) {
+	protected String buildFilename(String filenamePattern) {
 		String date = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH).format(new Date());
 		filenamePattern = filenamePattern.replace("{date}", date);
 		return filenamePattern;
 	}
 
-	private String buildLogline(int priority, String message) {
+	protected String buildLogline(int priority, String message) {
 		return String.format("%s %s[%s]: %s", DATE_TIME_FORMATTER.format(new Date()), Logger.findLevelName(priority), Thread.currentThread().getName(), message);
 	}
 
