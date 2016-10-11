@@ -26,8 +26,8 @@ dependencies {
 }
 
 ext {
-    libraryName = 'logger'
-    libraryGroupId = 'fr.beapp'
+    libraryName = 'Beapp Logger'
+    libraryGroupId = 'fr.beapp.logger'
     libraryArtifactId = 'logger'
     libraryVersion = '1.0'
     libraryPackaging = 'aar'
