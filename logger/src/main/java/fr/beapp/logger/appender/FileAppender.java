@@ -14,6 +14,10 @@ import java.util.Locale;
 
 import fr.beapp.logger.Logger;
 
+/**
+ * Write log messages on Android's filesystem.
+ * this class handle file rotation based on current day.
+ */
 public class FileAppender extends Appender {
 
 	private static final SimpleDateFormat DATE_TIME_FORMATTER = new SimpleDateFormat("HH:mm:ssZZ", Locale.ENGLISH);
@@ -40,12 +44,12 @@ public class FileAppender extends Appender {
 	}
 
 	@Override
-	public void log(@Logger.LogLevel int priority, @NonNull String message, @Nullable Throwable t) {
+	public void log(@Logger.LogLevel int priority, @NonNull String message, @Nullable Throwable tr) {
 		if (printStream != null) {
 			try {
 				printStream.print(buildLogline(priority, message));
-				if (t != null) {
-					t.printStackTrace(printStream);
+				if (tr != null) {
+					tr.printStackTrace(printStream);
 				}
 				printStream.print('\n');
 				printStream.flush();

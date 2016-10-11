@@ -14,54 +14,99 @@ import fr.beapp.logger.formatter.Formatter;
 
 /**
  * Logger class with enhanced {@link Formatter} and possibility to add multiple {@link Appender}s.
+ * <br/>
+ * This implementation was inspired by both :
+ * <ul>
+ * <li><a href="https://github.com/JakeWharton/timber">Square's Timber</a></li>
+ * <li><a href="http://www.slf4j.org/">QOS's SLF4J</a></li>
+ * </ul>
  */
 public class Logger {
 
 	private static final List<Appender> APPENDERS = new ArrayList<>();
 	private static Formatter formatter = new DefaultFormatter();
 
+	/**
+	 * Set the {@link Formatter} to use in order to format every log message. The formatted message will be used on all {@link Appender}s.
+	 * <br/>
+	 * Default is {@link DefaultFormatter}.
+	 *
+	 * @param formatter The formatter to use
+	 */
 	public static void formatter(@NonNull Formatter formatter) {
 		Logger.formatter = formatter;
 	}
 
+	/**
+	 * Add a new {@link Appender} to use to log messages
+	 *
+	 * @param appender The appender to add
+	 */
 	public static void add(@NonNull Appender appender) {
 		synchronized (APPENDERS) {
 			APPENDERS.add(appender);
 		}
 	}
 
+	/**
+	 * Log a TRACE message with optional format args.
+	 */
 	public static void trace(@Nullable String message, Object... args) {
 		log(Log.VERBOSE, null, message, args);
 	}
 
+	/**
+	 * Log a DEBUG message with optional format args.
+	 */
 	public static void debug(@Nullable String message, Object... args) {
 		log(Log.DEBUG, null, message, args);
 	}
 
+	/**
+	 * Log an INFO message with optional format args.
+	 */
 	public static void info(@Nullable String message, Object... args) {
 		log(Log.INFO, null, message, args);
 	}
 
+	/**
+	 * Log a WARNING message with optional format args.
+	 */
 	public static void warn(@Nullable String message, Object... args) {
 		log(Log.WARN, null, message, args);
 	}
 
+	/**
+	 * Log a WARNING exception and a message with optional format args.
+	 */
 	public static void warn(@Nullable String message, @Nullable Throwable tr, Object... args) {
 		log(Log.WARN, tr, message, args);
 	}
 
+	/**
+	 * Log an ERROR message with optional format args.
+	 */
 	public static void error(@Nullable String message, Object... args) {
 		log(Log.ERROR, null, message, args);
 	}
 
+	/**
+	 * Log an ERROR exception and a message with optional format args.
+	 */
 	public static void error(@Nullable String message, @Nullable Throwable tr, Object... args) {
 		log(Log.ERROR, tr, message, args);
 	}
 
+	/**
+	 * Log an WTF message with optional format args.
+	 */
 	public static void wtf(@Nullable String message, Object... args) {
 		log(Log.ASSERT, null, message, args);
 	}
 
+	/**
+	 * Log an WTF exception and a message with optional format args.
+	 */
 	public static void wtf(@Nullable String message, @Nullable Throwable tr, Object... args) {
 		log(Log.ASSERT, tr, message, args);
 	}

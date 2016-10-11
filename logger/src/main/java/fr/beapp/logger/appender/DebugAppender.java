@@ -6,6 +6,9 @@ import android.util.Log;
 
 import fr.beapp.logger.Logger;
 
+/**
+ * Write log messages in Android's log console
+ */
 public class DebugAppender extends Appender {
 	private static final int MAX_LOG_LENGTH = 4000;
 
@@ -16,7 +19,7 @@ public class DebugAppender extends Appender {
 	}
 
 	@Override
-	public void log(@Logger.LogLevel int priority, @NonNull String message, @Nullable Throwable t) {
+	public void log(@Logger.LogLevel int priority, @NonNull String message, @Nullable Throwable tr) {
 		if (message.length() < MAX_LOG_LENGTH) {
 			if (priority == Log.ASSERT) {
 				Log.wtf(tag, message);

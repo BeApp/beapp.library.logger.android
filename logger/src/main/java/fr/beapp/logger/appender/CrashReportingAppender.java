@@ -7,14 +7,17 @@ import com.crashlytics.android.Crashlytics;
 
 import fr.beapp.logger.Logger;
 
+/**
+ * Send log messages on <a href="https://fabric.io/kits/android/crashlytics">Crashlytics by Fabric</a>.
+ */
 public class CrashReportingAppender extends Appender {
 
 	@Override
-	public void log(@Logger.LogLevel int priority, @NonNull String message, @Nullable Throwable t) {
+	public void log(@Logger.LogLevel int priority, @NonNull String message, @Nullable Throwable tr) {
 		Crashlytics.log(String.format("%s: %s", Logger.findLevelName(priority), message));
 
-		if (t != null) {
-			Crashlytics.logException(t);
+		if (tr != null) {
+			Crashlytics.logException(tr);
 		}
 	}
 }

@@ -25,7 +25,7 @@ public class LoggerTest {
 		}
 
 		@Override
-		public void log(@Logger.LogLevel int priority, @NonNull String message, @Nullable Throwable t) {
+		public void log(@Logger.LogLevel int priority, @NonNull String message, @Nullable Throwable tr) {
 			acc.put(key, true);
 		}
 	}
