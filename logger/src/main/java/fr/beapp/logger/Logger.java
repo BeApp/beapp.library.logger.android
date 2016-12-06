@@ -111,16 +111,8 @@ public class Logger {
 		log(Log.ASSERT, tr, message, args);
 	}
 
-	protected static boolean isLoggable(@LogLevel int priority) {
-		return true;
-	}
-
 	@SuppressWarnings("ConstantConditions")
 	protected static void log(@LogLevel int priority, @Nullable Throwable tr, @Nullable String message, Object... args) {
-		if (!isLoggable(priority)) {
-			return;
-		}
-
 		String formattedMessage = formatter.format(tr, message, args);
 		if (formattedMessage == null || formattedMessage.isEmpty()) {
 			return;
@@ -146,8 +138,9 @@ public class Logger {
 				return "ERROR";
 			case Log.ASSERT:
 				return "WTF";
+			default:
+				return "";
 		}
-		return "";
 	}
 
 	@IntDef({Log.VERBOSE, Log.DEBUG, Log.INFO, Log.WARN, Log.ERROR, Log.ASSERT})

@@ -2,7 +2,6 @@ package fr.beapp.logger.formatter;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.util.Log;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -77,12 +76,13 @@ public class DefaultFormatter implements Formatter {
 				}
 			}
 		} catch (Exception ignored) {
+			// Can't use Logger.error here
 		}
 		return null;
 	}
 
 	@NonNull
-	protected String shortenCanonicalName(final @NonNull String canonicalName) {
+	protected String shortenCanonicalName(@NonNull final String canonicalName) {
 		if (canonicalName.isEmpty())
 			return "";
 

@@ -3,6 +3,7 @@ package fr.beapp.logger.appender;
 import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -38,7 +39,10 @@ public class FileAppender extends Appender {
 				FileOutputStream fileOutputStream = new FileOutputStream(outputFile, true);
 				printStream = new PrintStream(fileOutputStream);
 			} catch (FileNotFoundException e) {
-				e.printStackTrace();    // Can't use Logger.error here
+				// Can't use Logger.error here
+				if (Log.isLoggable(FileAppender.class.getSimpleName(), Log.ERROR)) {
+					Log.e(FileAppender.class.getSimpleName(), "Couldn't write log in file " + outputFile.getAbsolutePath(), e);
+				}
 			}
 		}
 	}
@@ -60,14 +64,14 @@ public class FileAppender extends Appender {
 				printStream.print('\n');
 				printStream.flush();
 			} catch (Exception ignored) {
+				// Can't use Logger.error here
 			}
 		}
 	}
 
 	protected String buildFilename(String filenamePattern) {
 		String date = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH).format(new Date());
-		filenamePattern = filenamePattern.replace("{date}", date);
-		return filenamePattern;
+		return filenamePattern.replace("{date}", date);
 	}
 
 	protected String buildLogline(int priority, String message) {
