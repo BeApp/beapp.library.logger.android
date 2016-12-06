@@ -21,8 +21,7 @@ import fr.beapp.logger.Logger;
  */
 public class FileAppender extends Appender {
 
-	private static final SimpleDateFormat DATE_TIME_FORMATTER = new SimpleDateFormat("HH:mm:ssZZ", Locale.ENGLISH);
-
+	private final SimpleDateFormat dateTimeFormatter = new SimpleDateFormat("HH:mm:ssZZ", Locale.ENGLISH);
 	private PrintStream printStream;
 
 	/**
@@ -75,7 +74,7 @@ public class FileAppender extends Appender {
 	}
 
 	protected String buildLogline(int priority, String message) {
-		return String.format("%s %s[%s]: %s", DATE_TIME_FORMATTER.format(new Date()), Logger.findLevelName(priority), Thread.currentThread().getName(), message);
+		return String.format("%s %s[%s]: %s", dateTimeFormatter.format(new Date()), Logger.findLevelName(priority), Thread.currentThread().getName(), message);
 	}
 
 }
