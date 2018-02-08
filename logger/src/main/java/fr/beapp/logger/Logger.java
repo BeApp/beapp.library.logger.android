@@ -38,6 +38,15 @@ public class Logger {
 	}
 
 	/**
+	 * Remove all {@link Appender}s already added
+	 */
+	public static void removeAllAppenders() {
+		synchronized (APPENDERS) {
+			APPENDERS.clear();
+		}
+	}
+
+	/**
 	 * Add a new {@link Appender} to use to log messages
 	 *
 	 * @param appender The appender to add
@@ -46,6 +55,24 @@ public class Logger {
 		synchronized (APPENDERS) {
 			APPENDERS.add(appender);
 		}
+	}
+
+	/**
+	 * Return all {@link Appender}s mathcing the given class
+	 *
+	 * @param clazz the class to match
+	 * @return a {@link List} of {@link Appender} mathcing the given class
+	 */
+	@NonNull
+	@SuppressWarnings("unchecked")
+	public static <T extends Appender> List<T> findOfType(Class<T> clazz) {
+		List<T> appenders = new ArrayList<>();
+		for (Appender appender : APPENDERS) {
+			if (appender.getClass().isAssignableFrom(clazz)) {
+				appenders.add((T) appender);
+			}
+		}
+		return appenders;
 	}
 
 	/**

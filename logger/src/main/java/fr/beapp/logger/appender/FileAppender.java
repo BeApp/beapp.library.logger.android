@@ -23,6 +23,7 @@ public class FileAppender extends Appender {
 
 	private final SimpleDateFormat dateTimeFormatter = new SimpleDateFormat("HH:mm:ssZZ", Locale.ENGLISH);
 	private PrintStream printStream;
+	private File outputFile;
 
 	/**
 	 * Possible placeholder for filenamePattern :
@@ -30,29 +31,33 @@ public class FileAppender extends Appender {
 	 * <li><code>{date}</code> : replaced by current date</li>
 	 * </ul>
 	 */
-	public FileAppender(String filenamePattern) {
-		File outputFolder = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-		if (outputFolder != null && (outputFolder.exists() || outputFolder.mkdirs())) {
-			File outputFile = new File(outputFolder, buildFilename(filenamePattern));
-			try {
-				FileOutputStream fileOutputStream = new FileOutputStream(outputFile, true);
-				printStream = new PrintStream(fileOutputStream);
-			} catch (FileNotFoundException e) {
-				// Can't use Logger.error here
-				if (Log.isLoggable(FileAppender.class.getSimpleName(), Log.ERROR)) {
-					Log.e(FileAppender.class.getSimpleName(), "Couldn't write log in file " + outputFile.getAbsolutePath(), e);
-				}
+	public FileAppender(@NonNull String filenamePattern) {
+		try {
+			outputFile = ensureOutputFile(filenamePattern);
+			FileOutputStream fileOutputStream = new FileOutputStream(outputFile, false);
+			printStream = new PrintStream(fileOutputStream);
+		} catch (FileNotFoundException e) {
+			// Can't use Logger.error here
+			if (Log.isLoggable(FileAppender.class.getSimpleName(), Log.ERROR)) {
+				String fullPath = outputFile != null ? outputFile.getAbsolutePath() : null;
+				Log.e(FileAppender.class.getSimpleName(), "Couldn't write log in file " + fullPath, e);
 			}
 		}
+		// Do not close the stream on finally block
 	}
 
-	public FileAppender(PrintStream printStream) {
+	public FileAppender(@NonNull PrintStream printStream) {
 		this.printStream = printStream;
 	}
 
+	/**
+	 * Close the stream opened to write the file
+	 */
 	public void close() {
-		printStream.close();
-		printStream = null;
+		if (printStream != null) {
+			printStream.close();
+			printStream = null;
+		}
 	}
 
 	@Override
@@ -68,12 +73,25 @@ public class FileAppender extends Appender {
 		}
 	}
 
-	protected String buildFilename(String filenamePattern) {
+	public File getOutputFile() {
+		return outputFile;
+	}
+
+	@NonNull
+	protected File ensureOutputFile(@NonNull String filenamePattern) throws FileNotFoundException {
+		File outputFolder = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+		if (outputFolder != null && (outputFolder.exists() || outputFolder.mkdirs())) {
+			return new File(outputFolder, buildFilename(filenamePattern));
+		}
+		throw new FileNotFoundException("Couldn't ensure file with pattern '" + filenamePattern + "' at path '" + outputFolder + "'");
+	}
+
+	protected String buildFilename(@NonNull String filenamePattern) {
 		String date = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH).format(new Date());
 		return filenamePattern.replace("{date}", date);
 	}
 
-	protected String buildLogline(int priority, String message) {
+	protected String buildLogline(@Logger.LogLevel int priority, @NonNull String message) {
 		return String.format("%s %s[%s]: %s", dateTimeFormatter.format(new Date()), Logger.findLevelName(priority), Thread.currentThread().getName(), message);
 	}
 
