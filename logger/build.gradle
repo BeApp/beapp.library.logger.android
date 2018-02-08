@@ -29,7 +29,7 @@ ext {
     libraryName = 'Beapp Logger'
     libraryGroupId = 'fr.beapp.logger'
     libraryArtifactId = 'logger'
-    libraryVersion = '1.0'
+    libraryVersion = '1.1'
     libraryPackaging = 'aar'
 
     libraryDescription = 'A logger library to wrap and enhanced default Android logs'
