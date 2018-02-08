@@ -38,6 +38,15 @@ public class Logger {
 	}
 
 	/**
+	 * Remove all {@link Appender}s already added
+	 */
+	public static void removeAllAppenders() {
+		synchronized (APPENDERS) {
+			APPENDERS.clear();
+		}
+	}
+
+	/**
 	 * Add a new {@link Appender} to use to log messages
 	 *
 	 * @param appender The appender to add
@@ -46,6 +55,24 @@ public class Logger {
 		synchronized (APPENDERS) {
 			APPENDERS.add(appender);
 		}
+	}
+
+	/**
+	 * Return all {@link Appender}s mathcing the given class
+	 *
+	 * @param clazz the class to match
+	 * @return a {@link List} of {@link Appender} mathcing the given class
+	 */
+	@NonNull
+	@SuppressWarnings("unchecked")
+	public static <T extends Appender> List<T> findOfType(Class<T> clazz) {
+		List<T> appenders = new ArrayList<>();
+		for (Appender appender : APPENDERS) {
+			if (appender.getClass().isAssignableFrom(clazz)) {
+				appenders.add((T) appender);
+			}
+		}
+		return appenders;
 	}
 
 	/**
@@ -111,16 +138,8 @@ public class Logger {
 		log(Log.ASSERT, tr, message, args);
 	}
 
-	protected static boolean isLoggable(@LogLevel int priority) {
-		return true;
-	}
-
 	@SuppressWarnings("ConstantConditions")
 	protected static void log(@LogLevel int priority, @Nullable Throwable tr, @Nullable String message, Object... args) {
-		if (!isLoggable(priority)) {
-			return;
-		}
-
 		String formattedMessage = formatter.format(tr, message, args);
 		if (formattedMessage == null || formattedMessage.isEmpty()) {
 			return;
@@ -146,8 +165,9 @@ public class Logger {
 				return "ERROR";
 			case Log.ASSERT:
 				return "WTF";
+			default:
+				return "";
 		}
-		return "";
 	}
 
 	@IntDef({Log.VERBOSE, Log.DEBUG, Log.INFO, Log.WARN, Log.ERROR, Log.ASSERT})

@@ -2,7 +2,6 @@ package fr.beapp.logger.formatter;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.util.Log;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -58,9 +57,13 @@ public class DefaultFormatter implements Formatter {
 		// Don't replace this with Log.getStackTraceString() - it hides UnknownHostException, which is not what we want.
 		StringWriter sw = new StringWriter(256);
 		PrintWriter pw = new PrintWriter(sw, false);
-		t.printStackTrace(pw);
-		pw.flush();
-		return sw.toString();
+		try {
+			t.printStackTrace(pw);
+			pw.flush();
+			return sw.toString();
+		} finally {
+			pw.close();
+		}
 	}
 
 	@Nullable
@@ -77,12 +80,13 @@ public class DefaultFormatter implements Formatter {
 				}
 			}
 		} catch (Exception ignored) {
+			// Can't use Logger.error here
 		}
 		return null;
 	}
 
 	@NonNull
-	protected String shortenCanonicalName(final @NonNull String canonicalName) {
+	protected String shortenCanonicalName(@NonNull final String canonicalName) {
 		if (canonicalName.isEmpty())
 			return "";
 

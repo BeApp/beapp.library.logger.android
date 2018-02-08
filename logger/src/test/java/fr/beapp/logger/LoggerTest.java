@@ -8,43 +8,80 @@ import android.util.Log;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import fr.beapp.logger.appender.Appender;
+import fr.beapp.logger.appender.DebugAppender;
+import fr.beapp.logger.formatter.Formatter;
 
 public class LoggerTest {
 
 	private static class DummyAppender extends Appender {
 		private final Integer key;
-		private final Map<Integer, Boolean> acc;
+		private final Map<Integer, List<String>> acc;
 
-		private DummyAppender(Integer key, Map<Integer, Boolean> acc) {
+		private DummyAppender(Integer key, Map<Integer, List<String>> acc) {
 			this.key = key;
 			this.acc = acc;
 		}
 
 		@Override
 		public void log(@Logger.LogLevel int priority, @NonNull String message, @Nullable Throwable tr) {
-			acc.put(key, true);
+			List<String> strings = acc.get(key);
+			if (strings == null) {
+				strings = new ArrayList<>();
+				acc.put(key, strings);
+			}
+			strings.add(message);
 		}
 	}
 
 	@Test
 	@SuppressLint("UseSparseArrays")
-	public void log() throws Exception {
-		Map<Integer, Boolean> acc = new HashMap<>();
+	public void testLog() throws Exception {
+		Map<Integer, List<String>> acc = new HashMap<>();
 
 		DummyAppender appender1 = new DummyAppender(1, acc);
 		DummyAppender appender5 = new DummyAppender(5, acc);
 
+		Logger.removeAllAppenders();
 		Logger.add(appender1);
 		Logger.add(appender5);
+		Logger.formatter(new Formatter() {
+			@Nullable
+			@Override
+			public String format(@Nullable Throwable tr, @Nullable String message, Object... args) {
+				return "formatted:" + message;
+			}
+		});
 
 		Logger.log(Log.DEBUG, null, "test message");
 
-		Assert.assertEquals(true, acc.get(1));
-		Assert.assertEquals(true, acc.get(5));
+		Assert.assertArrayEquals(new String[]{"formatted:test message"}, acc.get(1).toArray());
+		Assert.assertArrayEquals(new String[]{"formatted:test message"}, acc.get(5).toArray());
+	}
+
+	@Test
+	public void testFindOfType() {
+		Map<Integer, List<String>> acc = new HashMap<>();
+
+		DummyAppender appender1 = new DummyAppender(1, acc);
+		DummyAppender appender5 = new DummyAppender(5, acc);
+
+		Logger.removeAllAppenders();
+		Logger.add(appender1);
+		Logger.add(appender5);
+
+		List<DebugAppender> debugAppenders = Logger.findOfType(DebugAppender.class);
+		Assert.assertEquals(0, debugAppenders.size());
+
+		List<DummyAppender> dummyAppenders = Logger.findOfType(DummyAppender.class);
+		Assert.assertEquals(2, dummyAppenders.size());
+		Assert.assertEquals(appender1, dummyAppenders.get(0));
+		Assert.assertEquals(appender5, dummyAppenders.get(1));
 	}
 
 }
