@@ -9,6 +9,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -28,7 +30,21 @@ public class FileAppenderTest {
 	@Before
 	public void setup() {
 		out = new ByteArrayOutputStream();
-		simpleFileAppender = new FileAppender(new PrintStream(out)) {
+
+		simpleFileAppender = new FileAppender("") {
+			@NonNull
+			@Override
+			protected File ensureOutputFile(@NonNull String filenamePattern) throws FileNotFoundException {
+				return new File("");
+			}
+
+			@NonNull
+			@Override
+			protected PrintStream initPrintStream(@NonNull File outputFile) throws FileNotFoundException {
+				return new PrintStream(out);
+			}
+
+			@NonNull
 			@Override
 			protected String buildLogline(@Logger.LogLevel int priority, @NonNull String message) {
 				return message;

@@ -34,8 +34,7 @@ public class FileAppender extends Appender {
 	public FileAppender(@NonNull String filenamePattern) {
 		try {
 			outputFile = ensureOutputFile(filenamePattern);
-			FileOutputStream fileOutputStream = new FileOutputStream(outputFile, false);
-			printStream = new PrintStream(fileOutputStream);
+			printStream = initPrintStream(outputFile);
 		} catch (FileNotFoundException e) {
 			// Can't use Logger.error here
 			if (Log.isLoggable(FileAppender.class.getSimpleName(), Log.ERROR)) {
@@ -44,10 +43,6 @@ public class FileAppender extends Appender {
 			}
 		}
 		// Do not close the stream on finally block
-	}
-
-	public FileAppender(@NonNull PrintStream printStream) {
-		this.printStream = printStream;
 	}
 
 	/**
@@ -73,24 +68,36 @@ public class FileAppender extends Appender {
 		}
 	}
 
+	@NonNull
 	public File getOutputFile() {
 		return outputFile;
 	}
 
 	@NonNull
-	protected File ensureOutputFile(@NonNull String filenamePattern) throws FileNotFoundException {
-		File outputFolder = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-		if (outputFolder != null && (outputFolder.exists() || outputFolder.mkdirs())) {
-			return new File(outputFolder, buildFilename(filenamePattern));
-		}
-		throw new FileNotFoundException("Couldn't ensure file with pattern '" + filenamePattern + "' at path '" + outputFolder + "'");
+	protected PrintStream initPrintStream(@NonNull File outputFile) throws FileNotFoundException {
+		FileOutputStream fileOutputStream = new FileOutputStream(outputFile, false);
+		return new PrintStream(fileOutputStream, true);
 	}
 
+	@NonNull
+	protected File ensureOutputFile(@NonNull String filenamePattern) throws FileNotFoundException {
+		File appLogsFolder = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+		File file = new File(appLogsFolder, buildFilename(filenamePattern));
+		File logFolder = file.getParentFile();
+
+		if (logFolder.exists() || logFolder.mkdirs()) {
+			return file;
+		}
+		throw new FileNotFoundException("Couldn't ensure file with pattern '" + filenamePattern + "' at path '" + appLogsFolder + "'");
+	}
+
+	@NonNull
 	protected String buildFilename(@NonNull String filenamePattern) {
 		String date = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH).format(new Date());
 		return filenamePattern.replace("{date}", date);
 	}
 
+	@NonNull
 	protected String buildLogline(@Logger.LogLevel int priority, @NonNull String message) {
 		return String.format("%s %s[%s]: %s", dateTimeFormatter.format(new Date()), Logger.findLevelName(priority), Thread.currentThread().getName(), message);
 	}
