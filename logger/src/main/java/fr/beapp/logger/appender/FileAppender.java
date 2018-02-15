@@ -34,8 +34,7 @@ public class FileAppender extends Appender {
 	public FileAppender(@NonNull String filenamePattern) {
 		try {
 			outputFile = ensureOutputFile(filenamePattern);
-			FileOutputStream fileOutputStream = new FileOutputStream(outputFile, false);
-			printStream = new PrintStream(fileOutputStream);
+			printStream = initPrintStream(outputFile);
 		} catch (FileNotFoundException e) {
 			// Can't use Logger.error here
 			if (Log.isLoggable(FileAppender.class.getSimpleName(), Log.ERROR)) {
@@ -44,10 +43,6 @@ public class FileAppender extends Appender {
 			}
 		}
 		// Do not close the stream on finally block
-	}
-
-	public FileAppender(@NonNull PrintStream printStream) {
-		this.printStream = printStream;
 	}
 
 	/**
@@ -76,6 +71,12 @@ public class FileAppender extends Appender {
 	@NonNull
 	public File getOutputFile() {
 		return outputFile;
+	}
+
+	@NonNull
+	protected PrintStream initPrintStream(@NonNull File outputFile) throws FileNotFoundException {
+		FileOutputStream fileOutputStream = new FileOutputStream(outputFile, false);
+		return new PrintStream(fileOutputStream, true);
 	}
 
 	@NonNull
