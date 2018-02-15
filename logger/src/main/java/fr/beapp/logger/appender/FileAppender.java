@@ -73,24 +73,30 @@ public class FileAppender extends Appender {
 		}
 	}
 
+	@NonNull
 	public File getOutputFile() {
 		return outputFile;
 	}
 
 	@NonNull
 	protected File ensureOutputFile(@NonNull String filenamePattern) throws FileNotFoundException {
-		File outputFolder = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-		if (outputFolder != null && (outputFolder.exists() || outputFolder.mkdirs())) {
-			return new File(outputFolder, buildFilename(filenamePattern));
+		File appLogsFolder = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+		File file = new File(appLogsFolder, buildFilename(filenamePattern));
+		File logFolder = file.getParentFile();
+
+		if (logFolder.exists() || logFolder.mkdirs()) {
+			return file;
 		}
-		throw new FileNotFoundException("Couldn't ensure file with pattern '" + filenamePattern + "' at path '" + outputFolder + "'");
+		throw new FileNotFoundException("Couldn't ensure file with pattern '" + filenamePattern + "' at path '" + appLogsFolder + "'");
 	}
 
+	@NonNull
 	protected String buildFilename(@NonNull String filenamePattern) {
 		String date = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH).format(new Date());
 		return filenamePattern.replace("{date}", date);
 	}
 
+	@NonNull
 	protected String buildLogline(@Logger.LogLevel int priority, @NonNull String message) {
 		return String.format("%s %s[%s]: %s", dateTimeFormatter.format(new Date()), Logger.findLevelName(priority), Thread.currentThread().getName(), message);
 	}
