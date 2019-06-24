@@ -2,6 +2,7 @@ package fr.beapp.logger.appender;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -30,6 +31,17 @@ public class FileAppender extends Appender {
 	 * </ul>
 	 */
 	public FileAppender(@NonNull File logsDirectory, @NonNull String filenamePattern) throws FileNotFoundException {
+		this(Log.INFO, logsDirectory, filenamePattern);
+	}
+
+	/**
+	 * Possible placeholder for filenamePattern :
+	 * <ul>
+	 * <li><code>{date}</code> : replaced by current date</li>
+	 * </ul>
+	 */
+	public FileAppender(@Logger.LogLevel int level, @NonNull File logsDirectory, @NonNull String filenamePattern) throws FileNotFoundException {
+		super(level);
 		outputFile = ensureOutputFile(logsDirectory, buildFilename(filenamePattern));
 		printStream = ensurePrintStream(outputFile);
 	}

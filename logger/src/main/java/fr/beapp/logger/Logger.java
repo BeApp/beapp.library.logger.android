@@ -138,14 +138,23 @@ public class Logger {
 		log(Log.ASSERT, tr, message, args);
 	}
 
-	@SuppressWarnings("ConstantConditions")
 	protected static void log(@LogLevel int priority, @Nullable Throwable tr, @Nullable String message, Object... args) {
-		String formattedMessage = formatter.format(tr, message, args);
-		if (formattedMessage == null || formattedMessage.isEmpty()) {
-			return;
-		}
+		String formattedMessage = null;
 
 		for (Appender appender : APPENDERS) {
+			// Check if this appender can log at this level
+			if (!appender.isLoggable(priority)) {
+				continue;
+			}
+
+			// If the message wasn't formatted yet, we generate it. If it's still empty, stop here as we'll have nothing to log
+			if (formattedMessage == null) {
+				formattedMessage = formatter.format(tr, message, args);
+				if (formattedMessage == null || formattedMessage.isEmpty()) {
+					return;
+				}
+			}
+
 			appender.log(priority, formattedMessage, tr);
 		}
 	}

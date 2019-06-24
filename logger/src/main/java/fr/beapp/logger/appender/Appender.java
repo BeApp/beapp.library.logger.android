@@ -2,6 +2,7 @@ package fr.beapp.logger.appender;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 import fr.beapp.logger.Logger;
 
@@ -9,6 +10,12 @@ import fr.beapp.logger.Logger;
  * An appender is intended to write the log message somewhere
  */
 public abstract class Appender {
+
+	protected int level;
+
+	public Appender(@Logger.LogLevel int level) {
+		this.level = level;
+	}
 
 	/**
 	 * Called in order to log the message according to the appender's strategy.
@@ -18,5 +25,9 @@ public abstract class Appender {
 	 * @param tr       An optional {@link Throwable} to display in the log
 	 */
 	public abstract void log(@Logger.LogLevel int priority, @NonNull String message, @Nullable Throwable tr);
+
+	public boolean isLoggable(@Logger.LogLevel int priority) {
+		return priority >= this.level;
+	}
 
 }
