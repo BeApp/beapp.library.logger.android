@@ -11,6 +11,7 @@ import java.util.List;
 import fr.beapp.logger.appender.Appender;
 import fr.beapp.logger.formatter.DefaultFormatter;
 import fr.beapp.logger.formatter.Formatter;
+import fr.beapp.logger.formatter.SafeFormatter;
 
 /**
  * Logger class with enhanced {@link Formatter} and possibility to add multiple {@link Appender}s.
@@ -24,7 +25,7 @@ import fr.beapp.logger.formatter.Formatter;
 public class Logger {
 
 	private static final List<Appender> APPENDERS = new ArrayList<>();
-	private static Formatter formatter = new DefaultFormatter();
+	private static Formatter formatter = new SafeFormatter(new DefaultFormatter());
 
 	/**
 	 * Set the {@link Formatter} to use in order to format every log message. The formatted message will be used on all {@link Appender}s.
