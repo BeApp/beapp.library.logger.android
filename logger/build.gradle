@@ -29,7 +29,7 @@ ext {
     libraryName = 'Beapp Logger'
     libraryGroupId = 'fr.beapp.logger'
     libraryArtifactId = 'logger'
-    libraryVersion = '1.2'
+    libraryVersion = '1.3'
     libraryPackaging = 'aar'
 
     libraryDescription = 'A logger library to wrap and enhanced default Android logs'
@@ -61,7 +61,7 @@ sonarqube {
         def appProject = project(':logger')
 
         property 'sonar.host.url', 'https://sonar.beapp.fr'
-        property 'sonar.projectKey', "${libraryGroupId}:android"
+        property 'sonar.projectKey', "beapp.logger.andro"
         property 'sonar.projectName', "${libraryName} - Android"
         property 'sonar.projectDescription', "${libraryDescription}"
         property 'sonar.projectVersion', "${libraryVersion}"
