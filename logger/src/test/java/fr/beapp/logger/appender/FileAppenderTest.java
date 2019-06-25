@@ -28,19 +28,19 @@ public class FileAppenderTest {
 	private Formatter formatter = new DefaultFormatter();
 
 	@Before
-	public void setup() {
+	public void setup() throws Exception {
 		out = new ByteArrayOutputStream();
 
-		simpleFileAppender = new FileAppender("") {
+		simpleFileAppender = new FileAppender(new File(""), "") {
 			@NonNull
 			@Override
-			protected File ensureOutputFile(@NonNull String filenamePattern) throws FileNotFoundException {
+			protected File ensureOutputFile(@NonNull File logsDirectory, @NonNull String filenamePattern) throws FileNotFoundException {
 				return new File("");
 			}
 
 			@NonNull
 			@Override
-			protected PrintStream initPrintStream(@NonNull File outputFile) throws FileNotFoundException {
+			protected PrintStream ensurePrintStream(@NonNull File outputFile) throws FileNotFoundException {
 				return new PrintStream(out);
 			}
 

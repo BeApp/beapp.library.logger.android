@@ -5,12 +5,15 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
 import java.util.List;
 
 import fr.beapp.logger.appender.Appender;
 import fr.beapp.logger.formatter.DefaultFormatter;
 import fr.beapp.logger.formatter.Formatter;
+import fr.beapp.logger.formatter.SafeFormatter;
 
 /**
  * Logger class with enhanced {@link Formatter} and possibility to add multiple {@link Appender}s.
@@ -24,7 +27,7 @@ import fr.beapp.logger.formatter.Formatter;
 public class Logger {
 
 	private static final List<Appender> APPENDERS = new ArrayList<>();
-	private static Formatter formatter = new DefaultFormatter();
+	private static Formatter formatter = new SafeFormatter(new DefaultFormatter());
 
 	/**
 	 * Set the {@link Formatter} to use in order to format every log message. The formatted message will be used on all {@link Appender}s.
@@ -138,14 +141,23 @@ public class Logger {
 		log(Log.ASSERT, tr, message, args);
 	}
 
-	@SuppressWarnings("ConstantConditions")
 	protected static void log(@LogLevel int priority, @Nullable Throwable tr, @Nullable String message, Object... args) {
-		String formattedMessage = formatter.format(tr, message, args);
-		if (formattedMessage == null || formattedMessage.isEmpty()) {
-			return;
-		}
+		String formattedMessage = null;
 
 		for (Appender appender : APPENDERS) {
+			// Check if this appender can log at this level
+			if (!appender.isLoggable(priority)) {
+				continue;
+			}
+
+			// If the message wasn't formatted yet, we generate it. If it's still empty, stop here as we'll have nothing to log
+			if (formattedMessage == null) {
+				formattedMessage = formatter.format(tr, message, args);
+				if (formattedMessage == null || formattedMessage.isEmpty()) {
+					return;
+				}
+			}
+
 			appender.log(priority, formattedMessage, tr);
 		}
 	}
@@ -170,6 +182,7 @@ public class Logger {
 		}
 	}
 
+	@Retention(RetentionPolicy.SOURCE)
 	@IntDef({Log.VERBOSE, Log.DEBUG, Log.INFO, Log.WARN, Log.ERROR, Log.ASSERT})
 	public @interface LogLevel {
 	}

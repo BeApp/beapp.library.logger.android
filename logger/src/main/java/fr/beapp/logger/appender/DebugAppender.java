@@ -13,9 +13,16 @@ public class DebugAppender extends Appender {
 	private static final int MAX_LOG_LENGTH = 4000;
 
 	private final String tag;
+	private boolean useLevel;
 
 	public DebugAppender(String tag) {
+		this(Log.INFO, tag);
+	}
+
+	public DebugAppender(@Logger.LogLevel int level, String tag) {
+		super(level);
 		this.tag = tag;
+		this.useLevel = true;
 	}
 
 	@Override
@@ -35,6 +42,11 @@ public class DebugAppender extends Appender {
 				i = end;
 			} while (i < newline);
 		}
+	}
+
+	@Override
+	public boolean isLoggable(int priority) {
+		return useLevel ? super.isLoggable(priority) : Log.isLoggable(tag, priority);
 	}
 
 	protected void logLine(int priority, String message) {
