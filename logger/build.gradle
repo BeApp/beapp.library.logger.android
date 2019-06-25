@@ -61,7 +61,7 @@ sonarqube {
         def appProject = project(':logger')
 
         property 'sonar.host.url', 'https://sonar.beapp.fr'
-        property 'sonar.projectKey', "${libraryGroupId}:android"
+        property 'sonar.projectKey', "beapp.logger.andro"
         property 'sonar.projectName', "${libraryName} - Android"
         property 'sonar.projectDescription', "${libraryDescription}"
         property 'sonar.projectVersion', "${libraryVersion}"
