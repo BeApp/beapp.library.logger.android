@@ -26,16 +26,14 @@ Logger.error("This is error test number %d", exception, 1);
 
 # Installation
 
-Add Beapp's repository in your project's repositories list, then add the dependency.
+Add jcenter's repository in your project's repositories list, then add the dependency.
 
 ```groovy
 repositories {
     jcenter()
-    // ...
-    maven { url 'http://repository.beapp.fr/libs-release-local' }
 }
 
 dependencies {
-    compile 'fr.beapp.logger:logger:1.0'
+    implementation "fr.beapp.logger:logger:<latest-release>"
 }
 ```

@@ -1,4 +1,6 @@
 apply plugin: 'com.android.library'
+apply plugin: 'com.novoda.bintray-release'
+
 android {
     compileSdkVersion 29
     buildToolsVersion "29.0.2"
@@ -25,28 +27,24 @@ dependencies {
     testImplementation 'junit:junit:4.12'
 }
 
-ext {
-    libraryName = 'Beapp Logger'
-    libraryGroupId = 'fr.beapp.logger'
-    libraryArtifactId = 'logger'
-    libraryVersion = '1.4'
-    libraryPackaging = 'aar'
+publish {
+    userOrg = 'beapp'
+    groupId = 'fr.beapp.logger'
+    artifactId = 'logger'
+    publishVersion = '1.5'
 
-    libraryDescription = 'A logger library to wrap and enhanced default Android logs'
+    uploadName = "beapp-logger"
+    desc = 'A logger library to wrap and enhanced default Android logs'
 
-    siteUrl = 'https://bitbucket.org/beappers/beapp.logger.andro'
-    gitUrl = 'git@bitbucket.org:beappers/beapp.logger.andro.git'
+    website = 'https://github.com/beapp/beapp.library.logger.android'
 
-    developerId = 'dvilleneuve'
-    developerName = 'Damien Villeneuve'
-    developerEmail = 'd.villeneuve@beapp.fr'
+    licences = ["Apache-2.0"]
 
-    licenseName = 'The Apache Software License, Version 2.0'
-    licenseUrl = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-    allLicenses = ["Apache-2.0"]
+    bintrayUser = findProperty("beapp_bintray_user")
+    bintrayKey = findProperty("beapp_bintray_key")
+
+    dryRun = true
 }
-apply from: 'https://bitbucket.org/beappers/beapp.gradle/raw/master/publish-library.gradle'
-
 
 apply plugin: 'jacoco-android'
 jacoco {
