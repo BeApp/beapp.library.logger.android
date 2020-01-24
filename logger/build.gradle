@@ -31,7 +31,7 @@ publish {
     userOrg = 'beapp'
     groupId = 'fr.beapp.logger'
     artifactId = 'logger'
-    publishVersion = '1.4'
+    publishVersion = '1.5'
 
     uploadName = "beapp-logger"
     desc = 'A logger library to wrap and enhanced default Android logs'
