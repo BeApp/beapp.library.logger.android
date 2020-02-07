@@ -29,6 +29,7 @@ dependencies {
 
 publish {
     userOrg = 'beapp'
+    repoName = 'beapp-maven-oss'
     groupId = 'fr.beapp.logger'
     artifactId = 'logger'
     publishVersion = '1.5'
