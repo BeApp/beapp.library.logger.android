@@ -27,15 +27,20 @@ dependencies {
     testImplementation 'junit:junit:4.12'
 }
 
+ext {
+    libraryVersion = '1.5'
+    libraryDescription = 'A logger library to wrap and enhanced default Android logs'
+}
+
 publish {
     userOrg = 'beapp'
     repoName = 'beapp-maven-oss'
     groupId = 'fr.beapp.logger'
     artifactId = 'logger'
-    publishVersion = '1.5'
+    publishVersion = libraryVersion
 
     uploadName = "beapp-logger"
-    desc = 'A logger library to wrap and enhanced default Android logs'
+    desc = libraryDescription
 
     website = 'https://github.com/beapp/beapp.library.logger.android'
 
@@ -61,7 +66,7 @@ sonarqube {
 
         property 'sonar.host.url', 'https://sonar.beapp.fr'
         property 'sonar.projectKey', "beapp.logger.andro"
-        property 'sonar.projectName', "${libraryName} - Android"
+        property 'sonar.projectName', "Beapp Logger - Android"
         property 'sonar.projectDescription', "${libraryDescription}"
         property 'sonar.projectVersion', "${libraryVersion}"
         property 'sonar.sourceEncoding', 'UTF-8'
