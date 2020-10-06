@@ -20,9 +20,7 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'com.android.support:support-annotations:28.0.0'
 
-    compileOnly('com.crashlytics.sdk.android:crashlytics:2.10.1@aar') {
-        transitive = true
-    }
+    compileOnly 'com.google.firebase:firebase-crashlytics:17.2.2'
 
     testImplementation 'junit:junit:4.12'
 }
