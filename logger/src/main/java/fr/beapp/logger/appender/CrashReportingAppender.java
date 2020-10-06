@@ -4,7 +4,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
-import com.crashlytics.android.Crashlytics;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 
 import fr.beapp.logger.Logger;
 
@@ -23,10 +23,10 @@ public class CrashReportingAppender extends Appender {
 
 	@Override
 	public void log(@Logger.LogLevel int priority, @NonNull String message, @Nullable Throwable tr) {
-		Crashlytics.log(String.format("%s: %s", Logger.findLevelName(priority), message));
+		FirebaseCrashlytics.getInstance().log(String.format("%s: %s", Logger.findLevelName(priority), message));
 
 		if (tr != null) {
-			Crashlytics.logException(tr);
+			FirebaseCrashlytics.getInstance().recordException(tr);
 		}
 	}
 }
