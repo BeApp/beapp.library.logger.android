@@ -20,7 +20,7 @@ allprojects {
     repositories {
         jcenter()
         google()
-        maven { url 'https://maven.fabric.io/public' }
+        maven { url 'https://developer.huawei.com/repo/' }
     }
 }
 

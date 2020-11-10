@@ -1,6 +1,6 @@
 package fr.beapp.logger.formatter;
 
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 /**
  * The formatter is used to format the log message which will be sent to {@link fr.beapp.logger.appender.Appender}s.

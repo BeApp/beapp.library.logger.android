@@ -1,23 +1,24 @@
 package fr.beapp.logger.appender;
 
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.util.Log;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.google.firebase.crashlytics.FirebaseCrashlytics;
 
 import fr.beapp.logger.Logger;
 
 /**
- * Send log messages on <a href="https://fabric.io/kits/android/crashlytics">Crashlytics by Fabric</a>.
+ * Send log messages on <a href="https://firebase.google.com/docs/crashlytics/get-started?platform=android">Crashlytics by Firebase</a>.
  */
-public class CrashReportingAppender extends Appender {
+public class FirebaseCrashReportingAppender extends Appender {
 
-	public CrashReportingAppender() {
+	public FirebaseCrashReportingAppender() {
 		this(Log.INFO);
 	}
 
-	public CrashReportingAppender(@Logger.LogLevel int level) {
+	public FirebaseCrashReportingAppender(@Logger.LogLevel int level) {
 		super(level);
 	}
 
