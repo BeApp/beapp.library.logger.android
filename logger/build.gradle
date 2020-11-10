@@ -27,7 +27,7 @@ dependencies {
 }
 
 ext {
-    libraryVersion = '1.6'
+    libraryVersion = '1.7'
     libraryDescription = 'A logger library to wrap and enhanced default Android logs'
 }
 
