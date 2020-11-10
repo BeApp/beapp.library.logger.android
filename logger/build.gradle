@@ -21,6 +21,7 @@ dependencies {
     implementation 'androidx.annotation:annotation:1.1.0'
 
     compileOnly 'com.google.firebase:firebase-crashlytics:17.2.2'
+    compileOnly 'com.huawei.agconnect:agconnect-crash:1.4.1.300'
 
     testImplementation 'junit:junit:4.12'
 }

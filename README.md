@@ -12,6 +12,7 @@ Two steps are needed :
 ```java
 Logger.add(new DebugAppender("MyProjectTag"));
 Logger.add(new FirebaseCrashReportingAppender());
+Logger.add(new HuaweiCrashReportingAppender());
 Logger.add(new FileAppender("myproject-{date}.log"));
 
 // Optional
