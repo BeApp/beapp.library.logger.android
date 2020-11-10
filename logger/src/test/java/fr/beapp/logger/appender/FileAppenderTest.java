@@ -1,7 +1,8 @@
 package fr.beapp.logger.appender;
 
-import android.support.annotation.NonNull;
 import android.util.Log;
+
+import androidx.annotation.NonNull;
 
 import org.junit.After;
 import org.junit.Assert;
