@@ -24,7 +24,9 @@ public class HuaweiCrashReportingAppender extends Appender {
 
 	@Override
 	public void log(@Logger.LogLevel int priority, @NonNull String message, @Nullable Throwable tr) {
-		AGConnectCrash.getInstance().log(String.format("%s: %s", Logger.findLevelName(priority), message));
+		if (message != null && !message.isEmpty()) {
+			AGConnectCrash.getInstance().log(String.format("%s: %s", Logger.findLevelName(priority), message));
+		}
 
 		if (tr != null) {
 			AGConnectCrash.getInstance().log(Log.ERROR, tr.getLocalizedMessage());
