@@ -9,32 +9,35 @@ Two steps are needed :
 3. (optional) You can also use a different formatter to fit your needs on message formatting
  
  
-```java
-Logger.add(new DebugAppender("MyProjectTag"));
-Logger.add(new FirebaseCrashReportingAppender());
-Logger.add(new HuaweiCrashReportingAppender());
-Logger.add(new FileAppender("myproject-{date}.log"));
+```kotlin
+
+Logger.add(DebugAppender("MyProjectTag"))
+Logger.add(FirebaseCrashReportingAppender())
+Logger.add(HuaweiCrashReportingAppender())
+Logger.add(FileAppender("myproject-{date}.log"))
 
 // Optional
-Logger.formatter(new DefaultFormatter());
+Logger.formatter(DefaultFormatter())
 
-Logger.trace("This is trace test number %d", 1);
-Logger.debug("This is debug test number %d", 1);
-Logger.info("This is info test number %d", 1);
-Logger.warn("This is warning test number %d", 1);
-Logger.error("This is error test number %d", exception, 1);
+Logger.trace("This is trace test number %d", 1)
+Logger.debug("This is debug test number %d", 1)
+Logger.info("This is info test number %d", 1)
+Logger.warn("This is warning test number %d", 1)
+Logger.error("This is error test number %d", exception, 1)
 ```
 
 # Installation
 
 Add jcenter's repository in your project's repositories list, then add the dependency.
 
-```groovy
+```kotlin
 repositories {
-    jcenter()
+	jcenter()
+	// ...
+	maven(url = "http://repository.beapp.fr/libs-release-local")
 }
 
 dependencies {
-    implementation "fr.beapp.logger:logger:<latest-release>"
+	implementation("fr.beapp.logger:logger:<latest-release>")
 }
 ```
