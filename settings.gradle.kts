@@ -1,3 +1,5 @@
+@file:Suppress("UnstableApiUsage")
+
 pluginManagement {
 	repositories {
 		google()
@@ -11,6 +13,15 @@ dependencyResolutionManagement {
 		google()
 		mavenCentral()
 		mavenLocal()
+	}
+
+	versionCatalogs {
+		create("loggerCatalog") {
+			from(files("./logger/logger.versions.toml"))
+		}
+		create("libs") {
+			from(files("./libs.versions.toml"))
+		}
 	}
 }
 

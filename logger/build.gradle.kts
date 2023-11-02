@@ -7,7 +7,6 @@ plugins {
 //    id("https://bitbucket.org/beappers/beapp.gradle/raw/master/publish-library.gradle") out of date
 	id("maven-publish")
 	id("org.jetbrains.dokka")
-	jacoco
 	id("com.mxalbert.gradle.jacoco-android")
 }
 
@@ -77,15 +76,13 @@ android {
 }
 
 dependencies {
-	implementation("com.android.support:support-annotations:28.0.0")
+	implementation(loggerCatalog.annotation.get())
 
-	compileOnly("com.google.firebase:firebase-crashlytics:17.3.0") {
-		isTransitive = true
-	}
-	compileOnly("com.huawei.agconnect:agconnect-crash:1.4.1.300")
+	compileOnly(loggerCatalog.firebase.crashlytics.get())
+	compileOnly(loggerCatalog.huawei.crash.get())
 
-	testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.2")
-	testImplementation("org.junit.jupiter:junit-jupiter-engine:5.8.2")
+	testImplementation(loggerCatalog.junit.api.get())
+	testImplementation(loggerCatalog.junit.engine.get())
 }
 
 /** Tests and test Coverage */

@@ -1,0 +1,16 @@
+[versions]
+
+android_library = "8.1.1"
+dokka_version = "1.9.0"
+jacoco_version = "0.2.0"
+
+[plugins]
+
+android-library = { id = "com.android.library", version.ref = "android_library" }
+dokka = { id = "org.jetbrains.dokka", version.ref = "dokka_version" }
+jacoco = { id = "com.mxalbert.gradle.jacoco-android", version.ref = "jacoco_version" }
+
+
+[libraries]
+gradle-tools = { group = "com.android.tools.build", name = "gradle", version = "4.2.2" }
+kotlin-gradle-plugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version = "1.9.10" }
