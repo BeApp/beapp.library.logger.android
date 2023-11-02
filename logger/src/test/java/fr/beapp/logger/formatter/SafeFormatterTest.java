@@ -3,7 +3,7 @@ package fr.beapp.logger.formatter;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 import org.junit.jupiter.api.Test;
 

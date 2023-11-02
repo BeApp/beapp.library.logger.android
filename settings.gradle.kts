@@ -13,6 +13,7 @@ dependencyResolutionManagement {
 		google()
 		mavenCentral()
 		mavenLocal()
+		maven { url = uri("https://developer.huawei.com/repo/") }
 	}
 
 	versionCatalogs {
