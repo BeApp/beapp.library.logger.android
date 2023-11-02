@@ -17,7 +17,7 @@ import fr.beapp.logger.appender.Appender;
 import fr.beapp.logger.appender.DebugAppender;
 import fr.beapp.logger.formatter.Formatter;
 
-public class LoggerTest {
+public class LoggerJTest {
 
     private static class DummyAppender extends Appender {
         public final List<String> acc = new LinkedList<>();
@@ -44,16 +44,18 @@ public class LoggerTest {
         Logger.add(appender1);
         Logger.add(appender2);
         Logger.add(appender3);
-        Logger.formatter(formatter);
+        Logger.setFormatter(formatter);
 
         Logger.trace("trace");
         Logger.debug("debug");
         Logger.info("info");
         Logger.warn("warn");
+        Logger.warn();
+        Logger.error();
         Logger.error("error");
 
-        assertArrayEquals(new String[]{"formatted: debug", "formatted: info", "formatted: warn", "formatted: error"}, appender1.acc.toArray());
-        assertArrayEquals(new String[]{"formatted: info", "formatted: warn", "formatted: error"}, appender2.acc.toArray());
+        assertArrayEquals(new String[]{"formatted: debug", "formatted: info", "formatted: warn", "formatted: null", "formatted: null", "formatted: error"}, appender1.acc.toArray());
+        assertArrayEquals(new String[]{"formatted: info", "formatted: warn", "formatted: null", "formatted: null", "formatted: error"}, appender2.acc.toArray());
         assertArrayEquals(new String[]{}, appender3.acc.toArray());
     }
 
@@ -73,6 +75,17 @@ public class LoggerTest {
         assertEquals(2, dummyAppenders.size());
         assertEquals(appender1, dummyAppenders.get(0));
         assertEquals(appender2, dummyAppenders.get(1));
+    }
+
+    @Test
+    public void testFindLevelName() {
+        assertEquals("TRACE", Logger.findLevelName(Log.VERBOSE));
+        assertEquals("DEBUG", Logger.findLevelName(Log.DEBUG));
+        assertEquals("INFO", Logger.findLevelName(Log.INFO));
+        assertEquals("WARN", Logger.findLevelName(Log.WARN));
+        assertEquals("ERROR", Logger.findLevelName(Log.ERROR));
+        assertEquals("WTF", Logger.findLevelName(Log.ASSERT));
+        assertEquals("", Logger.findLevelName(42));
     }
 
 }

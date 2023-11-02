@@ -1,5 +1,6 @@
 ## [unreleased]
 
+- feature(Logger): migrated Logger to Kotlin
 - feature(annoation): migrated to androidx library
 - feature(gradle): migrate to version catalogs
 - fix(publication): cleaned up code added missing description and bound publication info to project instance

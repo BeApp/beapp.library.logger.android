@@ -19,7 +19,7 @@ public abstract class Appender {
     /**
      * Called in order to log the message according to the appender's strategy.
      *
-     * @param priority Priority of the log message
+     * @param priority [@{@link fr.beapp.logger.Logger.LogLevel}] Priority of the log message
      * @param message  The log message
      * @param tr       An optional {@link Throwable} to display in the log
      */
