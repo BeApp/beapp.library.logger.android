@@ -2,16 +2,18 @@ package fr.beapp.logger.appender;
 
 import android.util.Log;
 
-import androidx.annotation.NonNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import android.support.annotation.NonNull;
+import android.util.Log;
+
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -24,62 +26,64 @@ import fr.beapp.logger.formatter.Formatter;
 
 public class FileAppenderTest {
 
-	private FileAppender simpleFileAppender;
-	private ByteArrayOutputStream out;
-	private Formatter formatter = new DefaultFormatter();
+    private FileAppender simpleFileAppender;
+    private ByteArrayOutputStream out;
+    private final Formatter formatter = new DefaultFormatter();
 
-	@Before
-	public void setup() throws Exception {
-		out = new ByteArrayOutputStream();
+    @BeforeEach
+    public void setup() throws Exception {
+        out = new ByteArrayOutputStream();
 
-		simpleFileAppender = new FileAppender(new File(""), "") {
-			@NonNull
-			@Override
-			protected File ensureOutputFile(@NonNull File logsDirectory, @NonNull String filenamePattern) throws FileNotFoundException {
-				return new File("");
-			}
+        simpleFileAppender = new FileAppender(new File(""), "") {
+            @NonNull
+            @Override
+            protected File ensureOutputFile(@NonNull File logsDirectory, @NonNull String filenamePattern) {
+                return new File("");
+            }
 
-			@NonNull
-			@Override
-			protected PrintStream ensurePrintStream(@NonNull File outputFile) throws FileNotFoundException {
-				return new PrintStream(out);
-			}
+            @NonNull
+            @Override
+            protected PrintStream ensurePrintStream(@NonNull File outputFile) {
+                return new PrintStream(out);
+            }
 
-			@NonNull
-			@Override
-			protected String buildLogline(@Logger.LogLevel int priority, @NonNull String message) {
-				return message;
-			}
-		};
-	}
+            @NonNull
+            @Override
+            protected String buildLogline(@Logger.LogLevel int priority, @NonNull String message) {
+                return message;
+            }
+        };
+    }
 
-	@After
-	public void teardown() {
-		simpleFileAppender.close();
-	}
+    @AfterEach
+    public void teardown() {
+        simpleFileAppender.close();
+    }
 
-	@Test
-	public void testLog() throws Exception {
-		simpleFileAppender.log(Log.DEBUG, "test", null);
-		simpleFileAppender.log(Log.DEBUG, "foo", null);
-		simpleFileAppender.log(Log.DEBUG, "bar", null);
-		Assert.assertEquals("test\nfoo\nbar\n", out.toString());
-	}
+    @Test
+    public void testLog() {
+        simpleFileAppender.log(Log.DEBUG, "test", null);
+        simpleFileAppender.log(Log.DEBUG, "foo", null);
+        simpleFileAppender.log(Log.DEBUG, "bar", null);
+        assertEquals("test\nfoo\nbar\n", out.toString());
+    }
 
-	@Test
-	public void testLog_withException() throws Exception {
-		simpleFileAppender.log(Log.DEBUG, formatter.format(new RuntimeException(), "test"), new RuntimeException());
-		TestUtils.assertMatches("^test\njava.lang.RuntimeException\n.*", out.toString());
-	}
+    @Test
+    public void testLog_withException() {
+        String format = formatter.format(new RuntimeException(), "test");
+        assertNotNull(format);
+        simpleFileAppender.log(Log.DEBUG, format, new RuntimeException());
+        TestUtils.assertMatches("^test\njava.lang.RuntimeException\n.*", out.toString());
+    }
 
-	@Test
-	public void testBuildFilename() throws Exception {
-		Assert.assertEquals("", simpleFileAppender.buildFilename(""));
-		Assert.assertEquals("test", simpleFileAppender.buildFilename("test"));
-		Assert.assertEquals("test.log", simpleFileAppender.buildFilename("test.log"));
+    @Test
+    public void testBuildFilename() {
+        assertEquals("", simpleFileAppender.buildFilename(""));
+        assertEquals("test", simpleFileAppender.buildFilename("test"));
+        assertEquals("test.log", simpleFileAppender.buildFilename("test.log"));
 
-		String date = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH).format(new Date());
-		Assert.assertEquals("test-" + date + ".log", simpleFileAppender.buildFilename("test-{date}.log"));
-	}
+        String date = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH).format(new Date());
+        assertEquals("test-" + date + ".log", simpleFileAppender.buildFilename("test-{date}.log"));
+    }
 
 }

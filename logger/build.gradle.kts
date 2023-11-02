@@ -1,12 +1,14 @@
+import com.android.build.gradle.api.BaseVariantOutput
 import java.util.Locale
 
 plugins {
 	id("com.android.library")
+//	id("kotlin-android")
 //    id("https://bitbucket.org/beappers/beapp.gradle/raw/master/publish-library.gradle") FixMe out of date ?
-//	id("jacoco-android")
-//	id("org.sonarqube")
 	id("maven-publish")
 	id("org.jetbrains.dokka")
+	jacoco
+	id("com.mxalbert.gradle.jacoco-android")
 }
 
 val versionMajor = 1
@@ -16,8 +18,8 @@ val versionBuild = 0
 
 fun generateVersionCode() = versionMajor * 1_000_000 + versionMinor * 10_000 + versionPatch * 100 + versionBuild
 
-fun generateVersionName(): String {
-	val isRelease = gradle.startParameter.taskRequests.toString().lowercase(Locale.getDefault()).contains("release")
+fun generateVersionName(forceRelease: Boolean? = null): String {
+	val isRelease = forceRelease ?: gradle.startParameter.taskRequests.toString().lowercase(Locale.getDefault()).contains("release")
 	val isProd = gradle.startParameter.taskRequests.toString().lowercase(Locale.getDefault()).contains("prod")
 
 	// display build number except for prod release
@@ -28,20 +30,42 @@ fun generateVersionName(): String {
 	}
 }
 
+fun BaseVariantOutput.renameAarFile() {
+	if (outputFile == null || !outputFile.name.endsWith(".aar")) return
+	val isRelease = name.contains("release")
+	val fileName = "${project.name}-${generateVersionName(forceRelease = isRelease)}${if (!isRelease) "-$name" else ""}.aar"
+
+	val renamedFile = File(outputFile.parent, fileName)
+	outputFile.renameTo(renamedFile)
+}
+
 android {
 	namespace = "fr.beapp.logger"
 	compileSdk = 30
 
 	defaultConfig {
 		minSdk = 15
+
 	}
-    
-    buildTypes {
-        release {
-            isMinifyEnabled = true
-            //TODO proguard
-        }
-    }
+
+	buildTypes {
+		debug {
+			testCoverage {
+				enableUnitTestCoverage = true
+			}
+		}
+		release {
+			isMinifyEnabled = true
+			//TODO proguard
+		}
+	}
+
+	libraryVariants.all {
+		outputs.all {
+			renameAarFile()
+		}
+
+	}
 
 	compileOptions {
 		sourceCompatibility = JavaVersion.VERSION_1_8
@@ -57,7 +81,26 @@ dependencies {
 	}
 	compileOnly("com.huawei.agconnect:agconnect-crash:1.4.1.300")
 
-	testImplementation("junit:junit:4.13.2")
+	testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.2")
+	testImplementation("org.junit.jupiter:junit-jupiter-engine:5.8.2")
+}
+
+
+jacoco {
+	toolVersion = "0.8.11"
+	reportsDirectory.set(layout.buildDirectory.dir("jacoco"))
+}
+
+
+tasks.withType(Test::class.java) {
+	useJUnitPlatform()
+}
+
+tasks.withType<Test>().configureEach {
+	extensions.configure<JacocoTaskExtension> {
+		isIncludeNoLocationClasses = true
+		excludes = listOf("jdk.internal.*")
+	}
 }
 
 //ext {
@@ -81,29 +124,3 @@ dependencies {
 //    allLicenses = ["Apache-2.0"]
 //}
 //apply froxm: "https://bitbucket.org/beappers/beapp.gradle/raw/master/publish-library.gradle"
-
-
-//apply plugin: "jacoco-android"
-//jacoco {
-//	toolVersion = "0.8.3"
-//}
-
-
-//FixMe migrate to sonar-project.properties
-//apply plugin: "org.sonarqube"
-//sonarqube {
-//    androidVariant "debug"
-//    properties {
-//        def appProject = project(":logger")
-//
-//        property "sonar.host.url", "https://sonar.beapp.fr"
-//        property "sonar.projectKey", "beapp.logger.andro"
-//        property "sonar.projectName", "${libraryName} - Android"
-//        property "sonar.projectDescription", "${libraryDescription}"
-//        property "sonar.projectVersion", "${libraryVersion}"
-//        property "sonar.sourceEncoding", "UTF-8"
-//
-//        property "sonar.junit.reportPaths", "${appProject.buildDir}/$testResultsDirName/testDebugUnitTest"
-//        property "sonar.coverage.jacoco.xmlReportPaths", fileTree(dir: "${appProject.buildDir}/reports/jacoco", includes: ["**/*.xml"]).files.join(",")
-//    }
-//}
