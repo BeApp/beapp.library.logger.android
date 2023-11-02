@@ -1,9 +1,9 @@
 import com.android.build.gradle.api.BaseVariantOutput
+import java.io.ByteArrayOutputStream
 import java.util.Locale
 
 plugins {
 	id("com.android.library")
-//	id("kotlin-android")
 //    id("https://bitbucket.org/beappers/beapp.gradle/raw/master/publish-library.gradle") FixMe out of date ?
 	id("maven-publish")
 	id("org.jetbrains.dokka")
@@ -41,6 +41,7 @@ fun BaseVariantOutput.renameAarFile() {
 
 android {
 	namespace = "fr.beapp.logger"
+	description = "A logger library to wrap and enhanced default Android logs"
 	compileSdk = 30
 
 	defaultConfig {
@@ -71,6 +72,8 @@ android {
 		sourceCompatibility = JavaVersion.VERSION_1_8
 		targetCompatibility = JavaVersion.VERSION_1_8
 	}
+
+	publishing.singleVariant("release")
 }
 
 dependencies {
@@ -103,24 +106,58 @@ tasks.withType<Test>().configureEach {
 	}
 }
 
-//ext {
-//    libraryName = "Beapp Logger"
-//    libraryGroupId = "fr.beapp.logger"
-//    libraryArtifactId = "logger"
-//    libraryVersion = "1.4"
-//    libraryPackaging = "aar"
-//
-//    libraryDescription = "A logger library to wrap and enhanced default Android logs"
-//
-//    siteUrl = "https://bitbucket.org/beappers/beapp.logger.andro"
-//    gitUrl = "git@bitbucket.org:beappers/beapp.logger.andro.git"
-//
-//    developerId = "dvilleneuve"
-//    developerName = "Damien Villeneuve"
-//    developerEmail = "d.villeneuve@beapp.fr"
-//
-//    licenseName = "The Apache Software License, Version 2.0"
-//    licenseUrl = "http://www.apache.org/licenses/LICENSE-2.0.txt"
-//    allLicenses = ["Apache-2.0"]
-//}
+
+
+publishing {
+	publications {
+		register<MavenPublication>("release") {
+			groupId = android.namespace
+			artifactId = "logger"
+			version = generateVersionName(forceRelease = true)
+
+			pom {
+				licenses {
+					license {
+						name = "The Apache Software License, Version 2.0"
+						url = "http://www.apache.org/licenses/LICENSE-2.0.txt"
+						distribution = "[\"Apache-2.0\"]"
+					}
+				}
+
+				developers {
+					developer {
+						id = "dvilleneuve"
+						name = "Damien Villeneuve"
+						email = "d.villeneuve@beapp.fr"
+					}
+				}
+
+				scm {
+					val gitUrl = getGitOriginUrl()
+					connection = "scm:git:$gitUrl"
+					developerConnection = "scm:git:$gitUrl"
+					url = "https://bitbucket.org/beappers/beapp.logger.andro"
+				}
+			}
+
+			afterEvaluate {
+				from(components["release"])
+			}
+		}
+//		artifacts {
+//			add("release", file("$buildDir/outputs/aar/${project.name}-release.aar"))
+//		}
+	}
+}
+
+fun getGitOriginUrl(): String {
+	val baos = ByteArrayOutputStream()
+	val exec = project.exec {
+		commandLine("git", "config", "--get", "remote.origin.url")
+		standardOutput = baos
+	}
+	return baos.toString().trim()
+}
+
+
 //apply froxm: "https://bitbucket.org/beappers/beapp.gradle/raw/master/publish-library.gradle"
