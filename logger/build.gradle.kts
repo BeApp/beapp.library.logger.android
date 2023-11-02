@@ -4,7 +4,7 @@ import java.util.Locale
 
 plugins {
 	id("com.android.library")
-//    id("https://bitbucket.org/beappers/beapp.gradle/raw/master/publish-library.gradle") FixMe out of date ?
+//    id("https://bitbucket.org/beappers/beapp.gradle/raw/master/publish-library.gradle") out of date
 	id("maven-publish")
 	id("org.jetbrains.dokka")
 	jacoco
@@ -88,15 +88,13 @@ dependencies {
 	testImplementation("org.junit.jupiter:junit-jupiter-engine:5.8.2")
 }
 
-
+/** Tests and test Coverage */
+tasks.withType(Test::class.java) {
+	useJUnitPlatform()
+}
 jacoco {
 	toolVersion = "0.8.11"
 	reportsDirectory.set(layout.buildDirectory.dir("jacoco"))
-}
-
-
-tasks.withType(Test::class.java) {
-	useJUnitPlatform()
 }
 
 tasks.withType<Test>().configureEach {
@@ -106,16 +104,16 @@ tasks.withType<Test>().configureEach {
 	}
 }
 
-
-
+/** Library publication  */
 publishing {
 	publications {
 		register<MavenPublication>("release") {
 			groupId = android.namespace
-			artifactId = "logger"
+			artifactId = project.name
 			version = generateVersionName(forceRelease = true)
 
 			pom {
+				description = project.description
 				licenses {
 					license {
 						name = "The Apache Software License, Version 2.0"
@@ -144,20 +142,14 @@ publishing {
 				from(components["release"])
 			}
 		}
-//		artifacts {
-//			add("release", file("$buildDir/outputs/aar/${project.name}-release.aar"))
-//		}
 	}
 }
-
+/** Git utils **/
 fun getGitOriginUrl(): String {
 	val baos = ByteArrayOutputStream()
-	val exec = project.exec {
+	project.exec {
 		commandLine("git", "config", "--get", "remote.origin.url")
 		standardOutput = baos
 	}
 	return baos.toString().trim()
 }
-
-
-//apply froxm: "https://bitbucket.org/beappers/beapp.gradle/raw/master/publish-library.gradle"
