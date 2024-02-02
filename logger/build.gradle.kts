@@ -1,22 +1,19 @@
-import com.android.build.gradle.api.BaseVariantOutput
 import java.io.ByteArrayOutputStream
 import java.util.Locale
 
 plugins {
 	id("com.android.library")
 	id("org.jetbrains.kotlin.android")
-//    id("https://bitbucket.org/beappers/beapp.gradle/raw/master/publish-library.gradle") out of date
-	id("maven-publish")
 	id("org.jetbrains.dokka")
 	id("com.mxalbert.gradle.jacoco-android")
+	id("maven-publish")
+	id("signing")
 }
 
 val versionMajor = 1
 val versionMinor = 4
 val versionPatch = 0
 val versionBuild = 0
-
-fun generateVersionCode() = versionMajor * 1_000_000 + versionMinor * 10_000 + versionPatch * 100 + versionBuild
 
 fun generateVersionName(forceRelease: Boolean? = null): String {
 	val isRelease = forceRelease ?: gradle.startParameter.taskRequests.toString().lowercase(Locale.getDefault()).contains("release")
@@ -30,15 +27,6 @@ fun generateVersionName(forceRelease: Boolean? = null): String {
 	}
 }
 
-fun BaseVariantOutput.renameAarFile() {
-	if (outputFile == null || !outputFile.name.endsWith(".aar")) return
-	val isRelease = name.contains("release")
-	val fileName = "${project.name}-${generateVersionName(forceRelease = isRelease)}${if (!isRelease) "-$name" else ""}.aar"
-
-	val renamedFile = File(outputFile.parent, fileName)
-	outputFile.renameTo(renamedFile)
-}
-
 android {
 	namespace = "fr.beapp.logger"
 	description = "A logger library to wrap and enhanced default Android logs"
@@ -46,7 +34,6 @@ android {
 
 	defaultConfig {
 		minSdk = 15
-
 	}
 
 	kotlin.explicitApi()
@@ -61,13 +48,6 @@ android {
 			isMinifyEnabled = true
 			//TODO proguard
 		}
-	}
-
-	libraryVariants.all {
-		outputs.all {
-			renameAarFile()
-		}
-
 	}
 
 	compileOptions {
@@ -143,7 +123,25 @@ publishing {
 			}
 		}
 	}
+	repositories {
+		maven {
+			val releasesRepoUrl = uri("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/")
+			val snapshotsRepoUrl = uri("https://s01.oss.sonatype.org/content/repositories/snapshots/")
+			url = uri(if (version.toString().endsWith("SNAPSHOT")) snapshotsRepoUrl else releasesRepoUrl)
+
+			credentials {
+				username = project.property("mavenCentral_username") as String? ?: ""
+				password = project.property("mavenCentral_password") as String? ?: ""
+			}
+		}
+	}
 }
+
+signing {
+	useGpgCmd()
+	sign(publishing.publications["release"])
+}
+
 /** Git utils **/
 fun getGitOriginUrl(): String {
 	val baos = ByteArrayOutputStream()
