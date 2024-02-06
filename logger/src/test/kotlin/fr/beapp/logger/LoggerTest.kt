@@ -27,10 +27,10 @@ class LoggerTest {
 		}
 	}
 
-	private val formatter = Formatter { _: Throwable?, message: String?, _: Array<Any?>? -> "formatted: $message" }
+	private val formatter = Formatter { _: Throwable?, message: String?, _ -> "formatted: $message" }
 
-	private val silentFormatter = Formatter { _: Throwable?, message: String?, _: Array<Any?>? -> "" }
-	private val nullFormatter = Formatter { _: Throwable?, message: String?, _: Array<Any?>? -> null }
+	private val silentFormatter = Formatter { _: Throwable?, _: String?, _ -> "" }
+	private val nullFormatter = Formatter { _: Throwable?, _: String?, _ -> null }
 
 	@Test
 	fun `test log`() {
@@ -61,7 +61,7 @@ class LoggerTest {
 			arrayOf("formatted: info", "formatted: warn", "formatted: error", "formatted: null", "formatted: null", "formatted: wtf", "formatted: null"),
 			appender2.acc.toTypedArray()
 		)
-		Assertions.assertArrayEquals(arrayOf("formatted: wtf"), appender3.acc.toTypedArray())
+		Assertions.assertArrayEquals(arrayOf("formatted: wtf", "formatted: null"), appender3.acc.toTypedArray())
 		Logger.formatter = silentFormatter
 		removeAllAppenders()
 		add(appender4)
