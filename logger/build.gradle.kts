@@ -4,6 +4,7 @@ import java.util.Locale
 
 plugins {
 	id("com.android.library")
+	id("org.jetbrains.kotlin.android")
 //    id("https://bitbucket.org/beappers/beapp.gradle/raw/master/publish-library.gradle") out of date
 	id("maven-publish")
 	id("org.jetbrains.dokka")
@@ -41,12 +42,14 @@ fun BaseVariantOutput.renameAarFile() {
 android {
 	namespace = "fr.beapp.logger"
 	description = "A logger library to wrap and enhanced default Android logs"
-	compileSdk = 30
+	compileSdk = 34
 
 	defaultConfig {
 		minSdk = 15
 
 	}
+
+	kotlin.explicitApi()
 
 	buildTypes {
 		debug {
@@ -68,8 +71,8 @@ android {
 	}
 
 	compileOptions {
-		sourceCompatibility = JavaVersion.VERSION_1_8
-		targetCompatibility = JavaVersion.VERSION_1_8
+		sourceCompatibility = JavaVersion.VERSION_17
+		targetCompatibility = JavaVersion.VERSION_17
 	}
 
 	publishing.singleVariant("release")
