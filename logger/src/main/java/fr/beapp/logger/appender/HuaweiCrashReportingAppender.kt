@@ -8,7 +8,7 @@ import fr.beapp.logger.Logger.findLevelName
 /**
  * Send log messages on [Crash by Huawei](https://developer.huawei.com/consumer/en/doc/development/AppGallery-connect-Guides/agc-crash-getstarted).
  */
-open class HuaweiCrashReportingAppender(@Logger.LogLevel level: Int = Log.INFO) : Appender(level) {
+public open class HuaweiCrashReportingAppender(@Logger.LogLevel level: Int = Log.INFO) : Appender(level) {
     override fun log(@Logger.LogLevel priority: Int, message: String, tr: Throwable?) {
         if (message.isNotEmpty()) {
             AGConnectCrash.getInstance().log(String.format("%s: %s", findLevelName(priority), message))
