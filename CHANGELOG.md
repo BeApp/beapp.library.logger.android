@@ -1,5 +1,6 @@
 ## unreleased
 
+- feature(Appender): migrated `Appender`, `CrashReportingAppender`, `DebugAppender` and `FileAppender` to Kotlin
 - feature(Formatter): migrated `Formatter`, `DefaultFormatter` and `SafeFormatter` to Kotlin. Warning signature of `Formatter.format` has changed for parameter `args`.
 - feature(Logger): migrated Logger to Kotlin
 - feature(annoation): migrated to androidx library
