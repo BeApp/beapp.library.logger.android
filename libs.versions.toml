@@ -1,6 +1,6 @@
 [versions]
 
-android_library = "8.1.1"
+android_library = "8.2.2"
 dokka_version = "1.9.0"
 jacoco_version = "0.2.0"
 
